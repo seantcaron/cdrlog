@@ -2,12 +2,12 @@ CDR Reporting Utilities for Nortel Meridian and Avaya Definity
 --------------------------------------------------------------
 Sean Caron scaron@umich.edu
 
-###REQUIRES
+### Requires
 
 Device:SerialPort
 IO::Socket
 
-###INSTALLATION
+### Installation
 
 In general:
 
@@ -35,7 +35,7 @@ Tt would be a fairly trivial exercise to extend the scripts to do more
 sophisticated things with the output, such as wrapping it in HTML, or
 injecting it into a database.
 
-###USAGE
+### Usage
 
 Nominally, insert the following in your /etc/rc.local or create an init script
 in /etc/init.d containing the following:
@@ -45,7 +45,7 @@ in /etc/init.d containing the following:
 ./dcdrlog.pl &
 ```
 
-###BUGS
+### Bugs
 
 * No error checking
 
