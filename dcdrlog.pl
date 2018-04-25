@@ -11,37 +11,34 @@ use IO::Socket;
 $logfile = "/usr/local/apache/sites/wwwoss/definitycdr.log";
 
 $i_sock = new IO::Socket::INET (
-	LocalHost => 'sonnet.diablonet.net',
-	LocalPort => '5514',
-	Proto => 'tcp',
-	Listen => 1,
-	Reuse => 1);
+    LocalHost => 'sonnet.diablonet.net',
+    LocalPort => '5514',
+    Proto => 'tcp',
+    Listen => 1,
+    Reuse => 1);
 
 while (1) {
+    $next_sock = $i_sock->accept();
 
-	$next_sock = $i_sock->accept();
+    open LOGFIL, (">>" . $logfile);
 
-	open LOGFIL, (">>" . $logfile);
+    while (<$next_sock>) {
+        $i_line = $_;
 
-	while (<$next_sock>) {
+        $t_line = "";
 
-		$i_line = $_;
+        for ($c = 0; $c < (length $i_line); $c++) {
+            $n_char = substr $i_line, $c, 1;
 
-		$t_line = "";
+            if (($n_char ne "\x00") && ($n_char ne "\x0d")) {
+                $t_line = $t_line . $n_char;
+            }
+        }
 
-		for ( $c = 0; $c < (length $i_line); $c++) {
+        syswrite LOGFIL, $t_line;
+    }
 
-			$n_char = substr $i_line, $c, 1;
-
-			if ( ($n_char ne "\x00") && ($n_char ne "\x0d") ) {
-				$t_line = $t_line . $n_char;
-			}
-		}
-
-		syswrite LOGFIL, $t_line;
-	}
-
-	close LOGFIL;
+    close LOGFIL;
 }
 
 close $i_sock;

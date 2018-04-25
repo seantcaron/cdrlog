@@ -40,32 +40,30 @@ open LOGFIL, (">>" . $logfile);
 $t_line = "";
 
 while (1) {
+    # read in a character at a time from the serial port
+    ($count_in, $char_in) = $ob->read(1);
 
-	# read in a character at a time from the serial port
+    # ignore NULs and LFs otherwise add it to the tail of
+    # the line buffer
 
-	($count_in, $char_in) = $ob->read(1);
+    if (($char_in ne "\x00") && ($char_in ne "\x0d")) {
+        $t_line = $t_line . $char_in;
+    }
 
-	# ignore NULs and LFs otherwise add it to the tail of
-	# the line buffer
+    # when a full line of text has been obtained, verify
+    # that it is a cdr record and if so, add it to the
+    # log
 
-	if ( ($char_in ne "\x00") && ($char_in ne "\x0d") ) {
-		$t_line = $t_line . $char_in;
-	}
+    if ($char_in eq "\n") {
+        if ( ((substr $t_line, 0, 1) eq "N") && ((substr $t_line, 1, 1) eq " ") ) {
+            syswrite LOGFIL, $t_line;
+        }	
 
-	# when a full line of text has been obtained, verify
-	# that it is a cdr record and if so, add it to the
-	# log
-
-	if ($char_in eq "\n") {
-
-		if ( ((substr $t_line, 0, 1) eq "N") && ((substr $t_line, 1, 1) eq " ") ) {
-			syswrite LOGFIL, $t_line;
-		}
-
-		$t_line = "";
-	}
+        $t_line = "";
+    }
 }
 
 close LOGFIL;
 
 undef $ob;
+
