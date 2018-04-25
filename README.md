@@ -5,6 +5,7 @@ Sean Caron scaron@umich.edu
 ### Requires
 
 Device:SerialPort
+
 IO::Socket
 
 ### Installation
